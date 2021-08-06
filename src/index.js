@@ -12,9 +12,9 @@ async function getActiveTasks()
         Authorization: `Bearer ${TOKEN}`,
       },
     }).then((res) => res.json())
-    .then((data) => {
-      data.map((task) => {
-        console.log("\t"+task.content+"\n")
+    .then((data,) => {
+      data.map((task,index) => {
+        console.log("\t\t"+index+" "+task.content+"\n")
       })
     })
     .catch((err) => {
@@ -113,10 +113,10 @@ async function deleteATask()
 async function todoist(){
   while(true)
   {
-    console.log("1 - Show all active tasks\n")
-    console.log("2 - Create a task\n")
-    console.log("3 - Close a task\n")
-    console.log("4 - Delete a task\n")
+    console.log("\t1 - Show all active tasks\n")
+    console.log("\t2 - Create a task\n")
+    console.log("\t3 - Close a task\n")
+    console.log("\t4 - Delete a task\n")
     let choice = readlineSync.question("Enter the choice : ")
     console.log("\n")
     switch(choice){
