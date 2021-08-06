@@ -7,18 +7,19 @@ const TOKEN = process.env.TOKEN
 
 async function getActiveTasks() 
 {
-    await fetch("https://api.todoist.com/rest/v1/tasks", {
+    let data = await fetch("https://api.todoist.com/rest/v1/tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
       },
     }).then((res) => res.json())
     .then((data,) => {
-      data.map((task,index) => {
-        console.log("\t\t"+index+" "+task.content+"\n")
-      })
+      return data
     })
     .catch((err) => {
       console.log(err)
+    })
+    data.map((task,index) => {
+      console.log("\t\t"+index+" "+task.content+"\n")
     })
 }
 
@@ -31,6 +32,7 @@ async function createATask()
         "due_string": `${taskTime}`,
         "due_lang": "en"
     }
+    //console.log(obj)
     await fetch('https://api.todoist.com/rest/v1/tasks', {
         method: "POST",
         headers: {
@@ -40,11 +42,13 @@ async function createATask()
       body:JSON.stringify(obj)
     }).then(res => res.json())
     .then((data) => {
+        //console.log(data)
         console.log(`\nThe task ${data.content} has been created successfully.\n`)
     })
     .catch((err) => {
       console.log(err)
     })
+    
 }
 
 async function closeATask()
@@ -57,7 +61,7 @@ async function closeATask()
     }).then((res) => res.json())
     .then((data) => {
       data.map((task) => {
-        if(task.content.toLowerCase() === closeTask)
+        if(task.content === closeTask)
         {
             let id = task.id
             fetch(`https://api.todoist.com/rest/v1/tasks/${id}/close`, {
@@ -65,6 +69,13 @@ async function closeATask()
               headers: {
                 Authorization: `Bearer ${TOKEN}`,
               }
+            })
+            .then(res => res.json())
+            .then((data) => {
+              console.log(data)
+            })
+            .catch((err) => {
+              console.log(err)
             })
             console.log(`\nThe task ${closeTask} with id ${id} has been closed.\n`)
         }
@@ -85,8 +96,9 @@ async function deleteATask()
     }).then((res) => res.json())
     .then((data) => {
       data.map((task) => {
-        if(task.content.toLowerCase() === deleteTask)
+        if(task.content === deleteTask)
         {
+            console.log(task.id)
             let id = task.id
             fetch(`https://api.todoist.com/rest/v1/tasks/${id}`, {
               method : "DELETE",
@@ -102,6 +114,7 @@ async function deleteATask()
               console.log(err)
             })
             console.log(`\nThe task ${deleteTask} with id ${id} has been deleted.\n`)
+            //console.log(data)
         }
       })
     })
@@ -164,6 +177,5 @@ async function todoist(){
     }
   }
 }
-
 
 todoist()
