@@ -114,7 +114,6 @@ async function deleteATask()
               console.log(err)
             })
             console.log(`\nThe task ${deleteTask} with id ${id} has been deleted.\n`)
-            //console.log(data)
         }
       })
     })
