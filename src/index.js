@@ -122,6 +122,24 @@ async function deleteATask()
     })
 }
 
+async function getAllProjects() 
+{
+    let data = await fetch("https://api.todoist.com/rest/v1/projects", {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+      },
+    }).then((res) => res.json())
+    .then((data,) => {
+      return data
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+    data.map((project,index) => {
+      console.log("\t\t"+index+" "+project.name+"\n")
+    })
+}
+
 async function todoist(){
   while(true)
   {
@@ -129,6 +147,7 @@ async function todoist(){
     console.log("\t2 - Create a task\n")
     console.log("\t3 - Close a task\n")
     console.log("\t4 - Delete a task\n")
+    console.log("\t5 - Show all Projects\n")
     let choice = readlineSync.question("Enter the choice : ")
     console.log("\n")
     switch(choice){
@@ -162,6 +181,12 @@ async function todoist(){
           await deleteATask()
           break
 
+        }
+
+        case '5' :{
+
+          await getAllProjects()
+          break
         }
 
         case '0' :{
