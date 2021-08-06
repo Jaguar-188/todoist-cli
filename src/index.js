@@ -12,7 +12,7 @@ async function getActiveTasks()
         Authorization: `Bearer ${TOKEN}`,
       },
     }).then((res) => res.json())
-    .then((data,) => {
+    .then((data) => {
       return data
     })
     .catch((err) => {
