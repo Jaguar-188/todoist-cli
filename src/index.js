@@ -32,7 +32,6 @@ async function createATask()
         "due_string": `${taskTime}`,
         "due_lang": "en"
     }
-    //console.log(obj)
     await fetch('https://api.todoist.com/rest/v1/tasks', {
         method: "POST",
         headers: {
@@ -42,7 +41,6 @@ async function createATask()
       body:JSON.stringify(obj)
     }).then(res => res.json())
     .then((data) => {
-        //console.log(data)
         console.log(`\nThe task ${data.content} has been created successfully.\n`)
     })
     .catch((err) => {
