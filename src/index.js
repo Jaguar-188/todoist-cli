@@ -1,13 +1,15 @@
 const fetch = require("node-fetch");
 const chalk = require("chalk");
+const regEx = new RegExp("EAI_AGAIN*")
 const readlineSync = require("readline-sync")
 require("dotenv").config()
 
 const TOKEN = process.env.TOKEN
+const URL = "https://api.todoist.com/rest/v1/"
 
 async function getActiveTasks() 
 {
-    let data = await fetch("https://api.todoist.com/rest/v1/tasks", {
+    let data = await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
       },
@@ -19,7 +21,7 @@ async function getActiveTasks()
       console.log(err)
     })
     data.map((task,index) => {
-      console.log("\t\t"+index+" "+task.content+"\n")
+      console.table("\t\t"+index+" "+task.content+"\n")
     })
 }
 
@@ -32,13 +34,13 @@ async function createATask()
         "due_string": `${taskTime}`,
         "due_lang": "en"
     }
-    await fetch('https://api.todoist.com/rest/v1/tasks', {
+    await fetch(URL+"tasks", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${TOKEN}`,
         },
-      body:JSON.stringify(obj)
+        body:JSON.stringify(obj)
     }).then(res => res.json())
     .then((data) => {
         console.log(`\nThe task ${data.content} has been created successfully.\n`)
@@ -51,7 +53,7 @@ async function createATask()
 async function closeATask()
 {
     let closeTask = readlineSync.question("Enter the task you wish to close : ")
-    await fetch("https://api.todoist.com/rest/v1/tasks", {
+    await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
       },
@@ -61,7 +63,7 @@ async function closeATask()
         if(task.content === closeTask)
         {
             let id = task.id
-            fetch(`https://api.todoist.com/rest/v1/tasks/${id}/close`, {
+            fetch(URL+`tasks/${id}/close`, {
               method : "POST",
               headers: {
                 Authorization: `Bearer ${TOKEN}`,
@@ -86,7 +88,7 @@ async function closeATask()
 async function deleteATask()
 {
     let deleteTask = readlineSync.question("Enter the task you wish to delete : ")
-    await fetch("https://api.todoist.com/rest/v1/tasks", {
+    await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
       },
@@ -97,7 +99,7 @@ async function deleteATask()
         {
             console.log(task.id)
             let id = task.id
-            fetch(`https://api.todoist.com/rest/v1/tasks/${id}`, {
+            fetch(URL+`tasks/${id}`, {
               method : "DELETE",
               headers: {
                 Authorization: `Bearer ${TOKEN}`,
@@ -121,19 +123,27 @@ async function deleteATask()
 
 async function getAllProjects() 
 {
-    let data = await fetch("https://api.todoist.com/rest/v1/projects", {
+    let data = await fetch(URL+"projects", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
       },
     }).then((res) => res.json())
-    .then((data,) => {
+    .then((data) => {
       return data
     })
     .catch((err) => {
-      console.log(err)
+       if(regEx.test(err.toString()))
+       {
+          console.log("Error due to Network.Check Your Network Connection")
+          process.exit(0)
+       }
+       else
+       {
+          console.log(err)
+       }
     })
     data.map((project,index) => {
-      console.log("\t\t"+index+" "+project.name+"\n")
+      console.log("\t\t"+index+" "+project.name+" "+project.id+"\n")
     })
 }
 
@@ -143,7 +153,7 @@ async function createAProject()
     let obj= {
         "name": `${projectToCreate}` 
     }
-    await fetch('https://api.todoist.com/rest/v1/projects', {
+    await fetch(URL+"projects", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -159,17 +169,64 @@ async function createAProject()
     }) 
 }
 
+async function createATaskInProject(){
+    console.log("\tAbove is the Project list\n")
+    let projectName = readlineSync.question("Choose in which Project You wanted to create a task : ")
+    let data = await fetch(URL+"projects", {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+      },
+    }).then((res) => res.json())
+    .then((data) => {
+      return data
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+    for(let project of data)
+    {
+      if(project.name === projectName)
+      {
+          let taskToCreate = readlineSync.question("Specify the task you wish to create: ")
+          let taskTime = readlineSync.question("Specify the task time : ")
+          let obj= {
+              "content": `${taskToCreate}`, 
+              "due_string": `${taskTime}`,
+              "due_lang": "en",
+              "project_id" : project.id
+          }
+          await fetch(URL+"tasks", {
+              method: "POST",
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${TOKEN}`,
+              },
+              body:JSON.stringify(obj)
+          }).then(res => res.json())
+          .then((data) => {
+              console.log(`\nThe task ${data.content} has been successfully created in ${project.name}.\n`)
+          })
+          .catch((err) => {
+            console.log(err)
+          }) 
+      }
+    }
+
+    
+}
+
 
 async function todoist(){
   while(true)
   {
     console.log("\t0 - Exit\n")
-    console.log("\t1 - Show all active tasks\n")
+    console.log("\t1 - Show all active Tasks\n")
     console.log("\t2 - Create a Task\n")
     console.log("\t3 - Close a Task\n")
     console.log("\t4 - Delete a Task\n")
     console.log("\t5 - Show all Projects\n")
     console.log("\t6 - Create a Project\n")
+    console.log("\t7 - Create a Task in Project\n")
     let choice = readlineSync.question("Enter the choice : ")
     console.log("\n")
     switch(choice){
@@ -216,6 +273,14 @@ async function todoist(){
           
           await getAllProjects()
           await createAProject()
+          break
+
+        }
+
+        case '7' :{
+
+          await getAllProjects()
+          await createATaskInProject()
           break
 
         }
