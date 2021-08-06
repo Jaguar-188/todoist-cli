@@ -45,8 +45,7 @@ async function createATask()
     })
     .catch((err) => {
       console.log(err)
-    })
-    
+    }) 
 }
 
 async function closeATask()
@@ -138,14 +137,39 @@ async function getAllProjects()
     })
 }
 
+async function createAProject()
+{
+    let projectToCreate = readlineSync.question("Specify the name of Project you wish to create: ")
+    let obj= {
+        "name": `${projectToCreate}` 
+    }
+    await fetch('https://api.todoist.com/rest/v1/projects', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${TOKEN}`,
+        },
+        body:JSON.stringify(obj)
+    }).then(res => res.json())
+    .then((data) => {
+        console.log(`\nThe Project ${data.name} has been created successfully.\n`)
+    })
+    .catch((err) => {
+      console.log(err)
+    }) 
+}
+
+
 async function todoist(){
   while(true)
   {
+    console.log("\t0 - Exit\n")
     console.log("\t1 - Show all active tasks\n")
-    console.log("\t2 - Create a task\n")
-    console.log("\t3 - Close a task\n")
-    console.log("\t4 - Delete a task\n")
+    console.log("\t2 - Create a Task\n")
+    console.log("\t3 - Close a Task\n")
+    console.log("\t4 - Delete a Task\n")
     console.log("\t5 - Show all Projects\n")
+    console.log("\t6 - Create a Project\n")
     let choice = readlineSync.question("Enter the choice : ")
     console.log("\n")
     switch(choice){
@@ -185,6 +209,15 @@ async function todoist(){
 
           await getAllProjects()
           break
+
+        }
+
+        case '6' :{
+          
+          await getAllProjects()
+          await createAProject()
+          break
+
         }
 
         case '0' :{
