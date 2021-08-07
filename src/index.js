@@ -21,14 +21,14 @@ async function getActiveTasks()
       console.log(err)
     })
     data.map((task,index) => {
-      console.table("\t\t"+(index+1)+" "+task.content+"\n")
+      console.log(chalk.rgb(56, 53, 242)`\t\t[${(index+1)}]`,chalk.rgb(242, 141, 53)`${task.content}\n`)
     })
 }
 
 async function createATask()
 {
-    let taskToCreate = readlineSync.question("Specify the task you wish to create: ")
-    let taskTime = readlineSync.question("Specify the task time : ")
+    let taskToCreate = readlineSync.question("[?] Specify the task you wish to create: ")
+    let taskTime = readlineSync.question("[?] Specify the task time : ")
     let obj= {
         "content": `${taskToCreate}`, 
         "due_string": `${taskTime}`,
@@ -43,7 +43,7 @@ async function createATask()
         body:JSON.stringify(obj)
     }).then(res => res.json())
     .then((data) => {
-        console.log(`\nThe task ${data.content} has been created successfully.\n`)
+        console.log(chalk.rgb(67, 237, 28)`\n[+] The task ${data.content} has been created successfully.\n`)
     })
     .catch((err) => {
       console.log(err)
@@ -52,7 +52,7 @@ async function createATask()
 
 async function closeATask()
 {
-    let closeTask = readlineSync.question("Enter the task you wish to close : ")
+    let closeTask = readlineSync.question("[?] Enter the task you wish to close : ")
     let tasks = await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -81,12 +81,12 @@ async function closeATask()
           })
       }
     }
-    console.log(`\nThe task ${closeTask} has been closed successfully.\n`)
+    console.log(chalk.rgb(67, 237, 28)`\n[+] The task ${closeTask} has been closed successfully.\n`)
 }
 
 async function deleteATask()
 {
-    let deleteTask = readlineSync.question("Enter the task you wish to delete : ")
+    let deleteTask = readlineSync.question("[?] Enter the task you wish to delete : ")
     let tasks = await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -115,7 +115,7 @@ async function deleteATask()
           })
       }
     }
-    console.log(`\nThe task ${deleteTask} has been deleted successfully.\n`)
+    console.log(chalk.rgb(67, 237, 28)`\n[+] The task ${deleteTask} has been deleted successfully.\n`)
 }
 
 async function getAllProjects() 
@@ -131,7 +131,7 @@ async function getAllProjects()
     .catch((err) => {
        if(regEx.test(err.toString()))
        {
-          console.log("Error due to Network.Check Your Network Connection")
+          console.log(chalk.red("[-] Error due to Network.Check Your Network Connection"))
           process.exit(0)
        }
        else
@@ -140,13 +140,13 @@ async function getAllProjects()
        }
     })
     data.map((project,index) => {
-      console.log("\t\t"+index+" "+project.name+"\n")
+      console.log(chalk.rgb(56, 53, 242)`\t\t[${(index+1)}]`,chalk.rgb(242, 141, 53)`${project.name}\n`)
     })
 }
 
 async function createAProject()
 {
-    let projectToCreate = readlineSync.question("Specify the name of Project you wish to create: ")
+    let projectToCreate = readlineSync.question("[?] Specify the name of Project you wish to create: ")
     let obj= {
         "name": `${projectToCreate}` 
     }
@@ -159,7 +159,7 @@ async function createAProject()
         body:JSON.stringify(obj)
     }).then(res => res.json())
     .then((data) => {
-        console.log(`\nThe Project ${data.name} has been created successfully.\n`)
+        console.log(chalk.rgb(67, 237, 28)`\n[+] The Project ${data.name} has been created successfully.\n`)
     })
     .catch((err) => {
       console.log(err)
@@ -168,7 +168,7 @@ async function createAProject()
 
 async function createATaskInProject(){
     console.log("Above is the Project list\n")
-    let projectName = readlineSync.question("Choose in which Project You wanted to create a task : ")
+    let projectName = readlineSync.question("[?] Choose in which Project You wanted to create a task : ")
     let data = await fetch(URL+"projects", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -184,8 +184,8 @@ async function createATaskInProject(){
     {
       if(project.name === projectName)
       {
-          let taskToCreate = readlineSync.question("Specify the task you wish to create: ")
-          let taskTime = readlineSync.question("Specify the task time : ")
+          let taskToCreate = readlineSync.question("[?] Specify the task you wish to create: ")
+          let taskTime = readlineSync.question("[?] Specify the task time : ")
           let obj= {
               "content": `${taskToCreate}`, 
               "due_string": `${taskTime}`,
@@ -201,7 +201,7 @@ async function createATaskInProject(){
               body:JSON.stringify(obj)
           }).then(res => res.json())
           .then((data) => {
-              console.log(`\nThe task ${data.content} has been created successfully in ${project.name}.\n`)
+              console.log(chalk.rgb(67, 237, 28)`\n[+] The task ${data.content} has been created successfully in ${project.name}.\n`)
           })
           .catch((err) => {
             console.log(err)
@@ -212,7 +212,7 @@ async function createATaskInProject(){
 
 async function closeATaskInProject(){
     console.log("Above is the Project list\n")
-    let projectName = readlineSync.question("Choose from which Project You wanted to close a task : ")
+    let projectName = readlineSync.question("[?] Choose from which Project You wanted to close a task : ")
     let projects = await fetch(URL+"projects", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -224,7 +224,7 @@ async function closeATaskInProject(){
     .catch((err) => {
       console.log(err)
     })
-    let closeTask = readlineSync.question("Enter the task you wish to close : ")
+    let closeTask = readlineSync.question("[?] Enter the task you wish to close : ")
     let tasks = await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -264,12 +264,12 @@ async function closeATaskInProject(){
           
       }
     } 
-    console.log(`\nThe Task ${closeTask} from project ${projectName} is closed successfully.\n`)
+    console.log(chalk.rgb(67, 237, 28)`\n[+] The Task ${closeTask} from project ${projectName} is closed successfully.\n`)
 }
 
 async function deleteATaskInProject(){
     console.log("Above is the Project list\n")
-    let projectName = readlineSync.question("Choose from which Project You wanted to delete a task : ")
+    let projectName = readlineSync.question("[?] Choose from which Project You wanted to delete a task : ")
     let projects = await fetch(URL+"projects", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -281,7 +281,7 @@ async function deleteATaskInProject(){
     .catch((err) => {
       console.log(err)
     })
-    let deleteTask = readlineSync.question("Enter the task you wish to delete : ")
+    let deleteTask = readlineSync.question("[?] Enter the task you wish to delete : ")
     let tasks = await fetch(URL+"tasks", {
         headers: {
           Authorization: `Bearer ${TOKEN}`,
@@ -320,7 +320,7 @@ async function deleteATaskInProject(){
           }
       }
     }
-    console.log(`\nThe Task ${deleteTask} from project ${projectName} is deleted successfully.\n`)
+    console.log(chalk.rgb(67, 237, 28)`\n[+] The Task ${deleteTask} from project ${projectName} is deleted successfully.\n`)
 }
 
 
@@ -328,17 +328,17 @@ async function deleteATaskInProject(){
 async function todoist(){
   while(true)
   {
-    console.log("\t0 - Exit\n")
-    console.log("\t1 - Show all active Tasks\n")
-    console.log("\t2 - Create a Task\n")
-    console.log("\t3 - Close a Task\n")
-    console.log("\t4 - Delete a Task\n")
-    console.log("\t5 - Show all Projects\n")
-    console.log("\t6 - Create a Project\n")
-    console.log("\t7 - Create a Task in Project\n")
-    console.log("\t8 - Close a Task in Project\n")
-    console.log("\t9 - Delete a Task in Project\n")
-    let choice = readlineSync.question("Enter the choice : ")
+    console.log(chalk.cyan("\t[0] - Exit\n"))
+    console.log(chalk.cyan("\t[1] - Show all active Tasks\n"))
+    console.log(chalk.cyan("\t[2] - Create a Task\n"))
+    console.log(chalk.cyan("\t[3] - Close a Task\n"))
+    console.log(chalk.cyan("\t[4] - Delete a Task\n"))
+    console.log(chalk.cyan("\t[5] - Show all Projects\n"))
+    console.log(chalk.cyan("\t[6] - Create a Project\n"))
+    console.log(chalk.cyan("\t[7] - Create a Task in Project\n"))
+    console.log(chalk.cyan("\t[8] - Close a Task in Project\n"))
+    console.log(chalk.cyan("\t[9] - Delete a Task in Project\n"))
+    let choice = readlineSync.question(chalk.yellow("[+] Enter the choice : "))
     console.log("\n")
     switch(choice){
 
@@ -419,7 +419,7 @@ async function todoist(){
         }
 
         default : {
-          console.log("\tChoose the correct one from list\n")
+          console.log(chalk.red("\t[-] Choose the correct one from list\n"))
         }
     }
   }
