@@ -28,6 +28,7 @@ async function getActiveTasks()
 async function createATask()
 {
     let taskToCreate = readlineSync.question("[?] Specify the task you wish to create: ")
+    console.log("\n")
     let taskTime = readlineSync.question("[?] Specify the task time : ")
     let obj= {
         "content": `${taskToCreate}`, 
@@ -169,6 +170,7 @@ async function createAProject()
 async function createATaskInProject(){
     console.log("Above is the Project list\n")
     let projectName = readlineSync.question("[?] Choose in which Project You wanted to create a task : ")
+    console.log("\n")
     let data = await fetch(URL+"projects", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -184,8 +186,9 @@ async function createATaskInProject(){
     {
       if(project.name === projectName)
       {
-          let taskToCreate = readlineSync.question("[?] Specify the task you wish to create: ")
-          let taskTime = readlineSync.question("[?] Specify the task time : ")
+          let taskToCreate = readlineSync.question(chalk.yellow("[?] Specify the task you wish to create: "))
+          console.log("\n")
+          let taskTime = readlineSync.question(chalk.yellow("[?] Specify the task time : "))
           let obj= {
               "content": `${taskToCreate}`, 
               "due_string": `${taskTime}`,
@@ -212,7 +215,8 @@ async function createATaskInProject(){
 
 async function closeATaskInProject(){
     console.log("Above is the Project list\n")
-    let projectName = readlineSync.question("[?] Choose from which Project You wanted to close a task : ")
+    let projectName = readlineSync.question(chalk.yellow("[?] Choose from which Project You wanted to close a task : "))
+    console.log("\n")
     let projects = await fetch(URL+"projects", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -224,7 +228,7 @@ async function closeATaskInProject(){
     .catch((err) => {
       console.log(err)
     })
-    let closeTask = readlineSync.question("[?] Enter the task you wish to close : ")
+    let closeTask = readlineSync.question(chalk.yellow("[?] Enter the task you wish to close : "))
     let tasks = await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -269,7 +273,8 @@ async function closeATaskInProject(){
 
 async function deleteATaskInProject(){
     console.log("Above is the Project list\n")
-    let projectName = readlineSync.question("[?] Choose from which Project You wanted to delete a task : ")
+    let projectName = readlineSync.question(chalk.yellow("[?] Choose from which Project You wanted to delete a task : "))
+    console.log("\n")
     let projects = await fetch(URL+"projects", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -281,7 +286,7 @@ async function deleteATaskInProject(){
     .catch((err) => {
       console.log(err)
     })
-    let deleteTask = readlineSync.question("[?] Enter the task you wish to delete : ")
+    let deleteTask = readlineSync.question(chalk.yellow("[?] Enter the task you wish to delete : "))
     let tasks = await fetch(URL+"tasks", {
         headers: {
           Authorization: `Bearer ${TOKEN}`,
