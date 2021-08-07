@@ -169,7 +169,7 @@ async function createAProject()
 
 async function createATaskInProject(){
     console.log("Above is the Project list\n")
-    let projectName = readlineSync.question("[?] Choose in which Project You wanted to create a task : ")
+    let projectName = readlineSync.question(chalk.yellow("[?] Choose in which Project You wanted to create a task : "))
     console.log("\n")
     let data = await fetch(URL+"projects", {
       headers: {
