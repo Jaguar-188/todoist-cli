@@ -21,7 +21,7 @@ async function getActiveTasks()
       console.log(err)
     })
     data.map((task,index) => {
-      console.table("\t\t"+index+" "+task.content+"\n")
+      console.table("\t\t"+(index+1)+" "+task.content+"\n")
     })
 }
 
@@ -53,72 +53,69 @@ async function createATask()
 async function closeATask()
 {
     let closeTask = readlineSync.question("Enter the task you wish to close : ")
-    await fetch(URL+"tasks", {
+    let tasks = await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
-      },
+      }
     }).then((res) => res.json())
     .then((data) => {
-      data.map((task) => {
-        if(task.content === closeTask)
-        {
-            let id = task.id
-            fetch(URL+`tasks/${id}/close`, {
-              method : "POST",
-              headers: {
-                Authorization: `Bearer ${TOKEN}`,
-              }
-            })
-            .then(res => res.json())
-            .then((data) => {
-              console.log(data)
-            })
-            .catch((err) => {
-              console.log(err)
-            })
-            console.log(`\nThe task ${closeTask} with id ${id} has been closed.\n`)
-        }
-      })
+      return data
     })
     .catch((err) => {
       console.log(err)
     })
+    for(let task of tasks)
+    {
+      if(task.content === closeTask)
+      {
+          let id = task.id
+          await fetch(URL+`tasks/${id}/close`, {
+            method : "POST",
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            }
+          })
+          .then(res => res.json())
+          .catch((err) => {
+            console.log(err)
+          })
+      }
+    }
+    console.log(`\nThe task ${closeTask} has been closed successfully.\n`)
 }
 
 async function deleteATask()
 {
     let deleteTask = readlineSync.question("Enter the task you wish to delete : ")
-    await fetch(URL+"tasks", {
+    let tasks = await fetch(URL+"tasks", {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
-      },
+      }
     }).then((res) => res.json())
     .then((data) => {
-      data.map((task) => {
-        if(task.content === deleteTask)
-        {
-            console.log(task.id)
-            let id = task.id
-            fetch(URL+`tasks/${id}`, {
-              method : "DELETE",
-              headers: {
-                Authorization: `Bearer ${TOKEN}`,
-              }
-            })
-            .then(res => res.json())
-            .then((data) => {
-              console.log(data)
-            })
-            .catch((err) => {
-              console.log(err)
-            })
-            console.log(`\nThe task ${deleteTask} with id ${id} has been deleted.\n`)
-        }
-      })
+      return data
     })
     .catch((err) => {
       console.log(err)
     })
+    for(let task of tasks)
+    {
+      if(task.content === deleteTask)
+      {
+          let id = task.id
+          await fetch(URL+`tasks/${id}`, {
+            method : "DELETE",
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            }
+          })
+          .then(res => res.json())
+          .catch((err) => {
+            console.log(err)
+          })
+      }
+    }
+    console.log(`\nThe task ${deleteTask} has been deleted successfully.\n`)
 }
 
 async function getAllProjects() 
