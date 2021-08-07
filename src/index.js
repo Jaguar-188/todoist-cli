@@ -7,6 +7,11 @@ require("dotenv").config()
 const TOKEN = process.env.TOKEN
 const URL = "https://api.todoist.com/rest/v1/"
 
+function checkNetwork(){
+  console.log(chalk.red("[-] Error due to Network.Check Your Network Connection"))
+  process.exit(0)
+}
+
 async function getActiveTasks() 
 {
     let data = await fetch(URL+"tasks", {
@@ -18,7 +23,14 @@ async function getActiveTasks()
       return data
     })
     .catch((err) => {
-      console.log(err)
+      if(regEx.test(err.toString()))
+       {
+          checkNetwork()
+       }
+       else
+       {
+          console.log(err)
+       }
     })
     data.map((task,index) => {
       console.log(chalk.rgb(56, 53, 242)`\t\t[${(index+1)}]`,chalk.rgb(242, 141, 53)`${task.content}\n`)
@@ -47,7 +59,14 @@ async function createATask()
         console.log(chalk.rgb(67, 237, 28)`\n[+] The task ${data.content} has been created successfully.\n`)
     })
     .catch((err) => {
-      console.log(err)
+      if(regEx.test(err.toString()))
+       {
+          checkNetwork()
+       }
+       else
+       {
+          console.log(err)
+       }
     }) 
 }
 
@@ -63,7 +82,14 @@ async function closeATask()
       return data
     })
     .catch((err) => {
-      console.log(err)
+      if(regEx.test(err.toString()))
+       {
+          checkNetwork()
+       }
+       else
+       {
+          console.log(err)
+       }
     })
     for(let task of tasks)
     {
@@ -78,7 +104,14 @@ async function closeATask()
           })
           .then(res => res.json())
           .catch((err) => {
-            console.log(err)
+            if(regEx.test(err.toString()))
+            {
+                checkNetwork()
+            }
+            else
+            {
+                console.log(err)
+            }
           })
       }
     }
@@ -97,7 +130,14 @@ async function deleteATask()
       return data
     })
     .catch((err) => {
-      console.log(err)
+      if(regEx.test(err.toString()))
+       {
+          checkNetwork()
+       }
+       else
+       {
+          console.log(err)
+       }
     })
     for(let task of tasks)
     {
@@ -112,7 +152,14 @@ async function deleteATask()
           })
           .then(res => res.json())
           .catch((err) => {
-            console.log(err)
+            if(regEx.test(err.toString()))
+            {
+                checkNetwork()
+            }
+            else
+            {
+                console.log(err)
+            }
           })
       }
     }
@@ -132,8 +179,7 @@ async function getAllProjects()
     .catch((err) => {
        if(regEx.test(err.toString()))
        {
-          console.log(chalk.red("[-] Error due to Network.Check Your Network Connection"))
-          process.exit(0)
+          checkNetwork()
        }
        else
        {
@@ -163,7 +209,14 @@ async function createAProject()
         console.log(chalk.rgb(67, 237, 28)`\n[+] The Project ${data.name} has been created successfully.\n`)
     })
     .catch((err) => {
-      console.log(err)
+      if(regEx.test(err.toString()))
+       {
+          checkNetwork()
+       }
+       else
+       {
+          console.log(err)
+       }
     }) 
 }
 
@@ -180,7 +233,14 @@ async function createATaskInProject(){
       return data
     })
     .catch((err) => {
-      console.log(err)
+      if(regEx.test(err.toString()))
+      {
+        checkNetwork()
+      }
+      else
+      {
+        console.log(err)
+      }
     })
     for(let project of data)
     {
@@ -207,7 +267,14 @@ async function createATaskInProject(){
               console.log(chalk.rgb(67, 237, 28)`\n[+] The task ${data.content} has been created successfully in ${project.name}.\n`)
           })
           .catch((err) => {
-            console.log(err)
+            if(regEx.test(err.toString()))
+            {
+                checkNetwork()
+            }
+            else
+            {
+                console.log(err)
+            }
           }) 
       }
     } 
@@ -226,7 +293,14 @@ async function closeATaskInProject(){
       return projects
     })
     .catch((err) => {
-      console.log(err)
+      if(regEx.test(err.toString()))
+      {
+        checkNetwork()
+      }
+      else
+      {
+        console.log(err)
+      }
     })
     let closeTask = readlineSync.question(chalk.yellow("[?] Enter the task you wish to close : "))
     let tasks = await fetch(URL+"tasks", {
@@ -236,6 +310,16 @@ async function closeATaskInProject(){
     }).then((res) => res.json())
     .then((tasks) => {
       return tasks
+    })
+    .catch((err) => {
+      if(regEx.test(err.toString()))
+      {
+        checkNetwork()
+      }
+      else
+      {
+        console.log(err)
+      }
     })
     for(let project of projects)
     {
@@ -261,7 +345,14 @@ async function closeATaskInProject(){
                   console.log(data)
                 })
                 .catch((err) => {
-                  console.log(err)
+                  if(regEx.test(err.toString()))
+                  {
+                      checkNetwork()
+                  }
+                  else
+                  {
+                      console.log(err)
+                  }
                 })
               }
           }
@@ -284,16 +375,34 @@ async function deleteATaskInProject(){
       return projects
     })
     .catch((err) => {
-      console.log(err)
+      if(regEx.test(err.toString()))
+      {
+        checkNetwork()
+      }
+      else
+      {
+        console.log(err)
+      }
     })
     let deleteTask = readlineSync.question(chalk.yellow("[?] Enter the task you wish to delete : "))
     let tasks = await fetch(URL+"tasks", {
         headers: {
           Authorization: `Bearer ${TOKEN}`,
         },
-      }).then((res) => res.json())
-      .then((tasks) => {
+    })
+    .then((res) => res.json())
+    .then((tasks) => {
         return tasks
+    })
+    .catch((err) => {
+      if(regEx.test(err.toString()))
+      {
+        checkNetwork()
+      }
+      else
+      {
+        console.log(err)
+      }
     })
     for(let project of projects)
     {
@@ -319,7 +428,14 @@ async function deleteATaskInProject(){
                   console.log(data)
                 })
                 .catch((err) => {
-                  console.log(err)
+                  if(regEx.test(err.toString()))
+                  {
+                      checkNetwork()
+                  }
+                  else
+                  {
+                      console.log(err)
+                  }
                 })
               }
           }
