@@ -266,8 +266,64 @@ async function closeATaskInProject(){
           }
           
       }
+    } 
+    console.log(`\nThe Task ${closeTask} from project ${projectName} is closed successfully.\n`)
+}
+
+async function deleteATaskInProject(){
+    console.log("Above is the Project list\n")
+    let projectName = readlineSync.question("Choose from which Project You wanted to delete a task : ")
+    let projects = await fetch(URL+"projects", {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+      },
+    }).then((res) => res.json())
+    .then((projects) => {
+      return projects
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+    let deleteTask = readlineSync.question("Enter the task you wish to delete : ")
+    let tasks = await fetch(URL+"tasks", {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      }).then((res) => res.json())
+      .then((tasks) => {
+        return tasks
+    })
+    for(let project of projects)
+    {
+      if(project.name === projectName)
+      {
+          for(let task of tasks)
+          {
+              if(task.content === deleteTask)
+              {
+                let id = task.id
+                let obj = {
+                  "project_id": project.id
+                }
+                await fetch(URL+`tasks/${id}`, {
+                  method : "DELETE",
+                  headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                  },
+                  body : JSON.stringify(obj)
+                })
+                .then(res => res.json())
+                .then((data) => {
+                  console.log(data)
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+              }
+          }
+      }
     }
-    
+    console.log(`\nThe Task ${deleteTask} from project ${projectName} is deleted successfully.\n`)
 }
 
 
@@ -284,6 +340,7 @@ async function todoist(){
     console.log("\t6 - Create a Project\n")
     console.log("\t7 - Create a Task in Project\n")
     console.log("\t8 - Close a Task in Project\n")
+    console.log("\t9 - Delete a Task in Project\n")
     let choice = readlineSync.question("Enter the choice : ")
     console.log("\n")
     switch(choice){
