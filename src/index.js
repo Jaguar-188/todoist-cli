@@ -143,7 +143,7 @@ async function getAllProjects()
        }
     })
     data.map((project,index) => {
-      console.log("\t\t"+index+" "+project.name+" "+project.id+"\n")
+      console.log("\t\t"+index+" "+project.name+"\n")
     })
 }
 
@@ -170,7 +170,7 @@ async function createAProject()
 }
 
 async function createATaskInProject(){
-    console.log("\tAbove is the Project list\n")
+    console.log("Above is the Project list\n")
     let projectName = readlineSync.question("Choose in which Project You wanted to create a task : ")
     let data = await fetch(URL+"projects", {
       headers: {
@@ -204,16 +204,72 @@ async function createATaskInProject(){
               body:JSON.stringify(obj)
           }).then(res => res.json())
           .then((data) => {
-              console.log(`\nThe task ${data.content} has been successfully created in ${project.name}.\n`)
+              console.log(`\nThe task ${data.content} has been created successfully in ${project.name}.\n`)
           })
           .catch((err) => {
             console.log(err)
           }) 
       }
-    }
+    } 
+}
 
+async function closeATaskInProject(){
+    console.log("Above is the Project list\n")
+    let projectName = readlineSync.question("Choose from which Project You wanted to close a task : ")
+    let projects = await fetch(URL+"projects", {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+      },
+    }).then((res) => res.json())
+    .then((projects) => {
+      return projects
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+    let closeTask = readlineSync.question("Enter the task you wish to close : ")
+    let tasks = await fetch(URL+"tasks", {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+      },
+    }).then((res) => res.json())
+    .then((tasks) => {
+      return tasks
+    })
+    for(let project of projects)
+    {
+      if(project.name === projectName)
+      {
+          for(let task of tasks)
+          {
+              if(task.content === closeTask)
+              {
+                let id = task.id
+                let obj = {
+                  "project_id": project.id
+                }
+                await fetch(URL+`tasks/${id}/close`, {
+                  method : "POST",
+                  headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                  },
+                  body : JSON.stringify(obj)
+                })
+                .then(res => res.json())
+                .then((data) => {
+                  console.log(data)
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+              }
+          }
+          
+      }
+    }
     
 }
+
 
 
 async function todoist(){
@@ -227,6 +283,7 @@ async function todoist(){
     console.log("\t5 - Show all Projects\n")
     console.log("\t6 - Create a Project\n")
     console.log("\t7 - Create a Task in Project\n")
+    console.log("\t8 - Close a Task in Project\n")
     let choice = readlineSync.question("Enter the choice : ")
     console.log("\n")
     switch(choice){
@@ -281,6 +338,22 @@ async function todoist(){
 
           await getAllProjects()
           await createATaskInProject()
+          break
+
+        }
+
+        case '8' :{
+
+          await getAllProjects()
+          await closeATaskInProject()
+          break
+
+        }
+
+        case '9' :{
+
+          await getAllProjects()
+          await deleteATaskInProject()
           break
 
         }
